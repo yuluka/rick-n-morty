@@ -2,6 +2,8 @@ package ui;
 
 import java.util.Scanner;
 
+import model.LookingSeeds;
+
 public class Menu {
 	
 	private static Scanner in = new Scanner(System.in);
@@ -42,6 +44,9 @@ public class Menu {
 		int rows = in.nextInt();
 		
 		System.out.println("Columnas: " + columns + "\nFilas: " + rows);
+		
+		LookingSeeds.createBoard(columns, rows);
+		System.out.println(LookingSeeds.printBoard());
 	}
 	
 	public static void seeScores() {
