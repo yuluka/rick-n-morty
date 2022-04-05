@@ -13,6 +13,6 @@ public class LookingSeeds {
 	}
 	
 	public static String printBoard() {
-		return board.printSquares();
+		return board.getBoard();
 	}
 }

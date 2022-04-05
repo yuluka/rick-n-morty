@@ -7,12 +7,17 @@ public class Board {
 	private int rows;
 	private int columns;
 	private ArrayList<Square> squares;
+	private String completeBoard;
 	
 	public Board(int columns, int rows) {
 		this.rows = rows;
 		this.columns = columns;
+		
 		squares = new ArrayList<Square>();
+		completeBoard = "";
+		
 		createSquares();
+		createBoard();
 	}
 
 	public int getRows() {
@@ -45,21 +50,37 @@ public class Board {
 		}
 	}
 	
-	public String printSquares(int i, String board) {
-		if(i == columns*rows) {
-			return "";
-		}
-		
-		board = squares.get(i).squareToString() + "	";
-		
-		if((i+1) %columns == 0 && i != 0) {
-			board += "\n";
-		}
-		
-		return board + printSquares(++i, board);
+	public void createBoard() {
+		createBoard(0);
 	}
 	
-	public String printSquares() {
-		return printSquares(0, "");
+	public void createBoard(int i) {
+		if(i >= columns*rows) {
+			return;
+		}
+		
+		if(i %columns == 0 && i != 0) {
+			int j = i;
+			i += columns;
+			completeBoard += "\n";
+			inverseWay(i, j);
+			completeBoard += "\n";
+		}
+		
+		completeBoard += squares.get(i).squareToString() + "	";
+		createBoard(++i);
+	}
+	
+	public void inverseWay(int i, int j) {
+		if(i == j) {
+			return;
+		}
+		
+		completeBoard += squares.get(i-1).squareToString() + "	";
+		inverseWay(--i, j);
+	}
+	
+	public String getBoard() {
+		return completeBoard;
 	}
 }
