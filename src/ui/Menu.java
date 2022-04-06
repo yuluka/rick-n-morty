@@ -2,7 +2,7 @@ package ui;
 
 import java.util.Scanner;
 
-import model.LookingSeeds;
+import model.LookingSeedsData;
 
 public class Menu {
 	
@@ -45,8 +45,8 @@ public class Menu {
 		
 		System.out.println("Columnas: " + columns + "\nFilas: " + rows);
 		
-		LookingSeeds.createBoard(columns, rows);
-		System.out.println(LookingSeeds.printBoard());
+		LookingSeedsData.createBoard(columns, rows);
+		System.out.println(LookingSeedsData.printBoard());
 	}
 	
 	public static void seeScores() {

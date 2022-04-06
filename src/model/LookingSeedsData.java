@@ -1,10 +1,13 @@
 package model;
 
-public class LookingSeeds {
+import java.util.ArrayList;
+
+public class LookingSeedsData {
 
 	private static Board board;
+	private static ArrayList<String> scores;
 
-	public LookingSeeds() {
+	public LookingSeedsData() {
 		
 	}
 	
