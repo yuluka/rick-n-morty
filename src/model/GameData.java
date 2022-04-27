@@ -32,4 +32,8 @@ public class GameData {
 			board.movePlayerBackward(dice);
 		}
 	}
+	
+	public static void createPlayers(String usernameR, String usernameM) {
+		board.positionPlayer(usernameR, usernameM);
+	}
 }

@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 public class Board {
 
 	private int rows;
@@ -8,15 +10,19 @@ public class Board {
 	
 	private Square head;
 	private Square tail;
+	private Square rickSq;
+	private Square mortySq;	//Pointers of the positions of Rick and Morty.
+	
+	private ArrayList<Player> players; //The players are saved in an arraylist because it is easier to add more players if I want that in some moment.
 	
 	public Board(int columns, int rows) {
 		this.rows = rows;
 		this.columns = columns;
 		
 		completeBoard = "";
+		players = new ArrayList<Player>();
 		
 		createBoard();
-		setPlayer("R");
 	}
 
 	public int getRows() {
@@ -110,17 +116,30 @@ public class Board {
 		movePlayerForward(dice,head);
 	}
 	
-	private void movePlayerForward(int dice, Square current) {
+	private void movePlayerForward(int dice, Square current) { //No está funcionando con dos players.
 		if(dice == 0) {
+			players.get(0).setTurn(false);
+			players.get(1).setTurn(true);
 			return;
-		} else if(current.getPlayer().isEmpty()) {
+		} else if(current.getPlayer1() == null) {
+			movePlayerForward(dice, current.getNext());
+			return;
+		} else if(current.getPlayer1().isTurn()) {
+			current.getNext().setPlayer1(current.getPlayer1());
+			current.setPlayer1(null);
+			movePlayerForward(--dice, current.getNext());
+			return;
+		} else {
 			movePlayerForward(dice, current.getNext());
 			return;
 		}
 		
-		current.getNext().setPlayer(current.getPlayer());
+		/*current.getNext().setPlayer(current.getPlayer());
 		current.setPlayer("");
-		movePlayerForward(--dice, current.getNext());
+		
+		current.getNext().setPlayer1(current.getPlayer1());
+		current.setPlayer1(null);
+		movePlayerForward(--dice, current.getNext());*/
 	}
 	
 	public void movePlayerBackward(int dice) {
@@ -140,7 +159,37 @@ public class Board {
 		movePlayerBackward(--dice, current.getPrevious());
 	}
 	
-	public void setPlayer(String player) {
-		head.setPlayer(player);
+	public void positionPlayer(String usernameR, String usernameM) {
+		Player rick = new Player(usernameR, "R");
+		Player morty = new Player(usernameM, "M"); //Creates the players.
+		
+		rick.setTurn(true); //Rick begins 'cause he's better. 
+		morty.setTurn(false); //Buh. Morty's bullshit.
+		
+		players.add(rick);
+		players.add(morty);
+		
+		rickSq = randomSquare();
+		mortySq = randomSquare();
+		rickSq.setPlayer1(rick);
+		mortySq.setPlayer1(morty);
+	}
+	
+	public Square randomSquare() {
+		int randomPos = (int) (Math.random()*(columns*rows)+1);
+		
+		while(rickSq != null && randomPos == rickSq.getPosition()) {
+			randomPos = (int) (Math.random()*(columns*rows)+1);
+		}
+		
+		return searchSquare(head, randomPos);
+	}
+	
+	private Square searchSquare(Square current, int pos) {
+		if(current.getPosition() == pos) {
+			return current;
+		}
+		
+		return searchSquare(current.getNext(), pos);
 	}
 }

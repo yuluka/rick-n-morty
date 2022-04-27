@@ -45,6 +45,19 @@ public class Menu {
 		
 		GameData.createBoard(columns, rows);
 		
+		createPlayers();
+	}
+	
+	public static void createPlayers() {
+		System.out.println("\nDigita el username del primer jugador (usará a Rick):");
+		in.nextLine();
+		String rick = in.nextLine();
+		
+		System.out.println("\nDigita el username del segundo jugador (usará a Morty):");
+		String morty = in.nextLine();
+		
+		GameData.createPlayers(rick, morty);
+		
 		playing();
 	}
 	

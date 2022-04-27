@@ -4,6 +4,7 @@ public class Square {
 	
 	private int position; //Es le número de la casilla.
 	private String player; //La letra representación del jugador que esté en la casilla.
+	private Player player1;
 	
 	//private int portals;
 	//private boolean seed;
@@ -13,6 +14,7 @@ public class Square {
 	
 	public Square(int position) {
 		this.position = position;
+		player1 = null;
 		player = "";
 	}
 	
@@ -24,11 +26,19 @@ public class Square {
 		return player;
 	}
 	
+	public Player getPlayer1() {
+		return player1;
+	}
+
+	public void setPlayer1(Player player1) {
+		this.player1 = player1;
+	}
+
 	public String squareToString() {
-		if(player.isEmpty()) {
+		if(player1 == null) {
 			return "[ " + position + " ]";
 		} else {
-			return "[ " + player + " ]";
+			return "[ " + player1.getName() + " ]";
 		}		
 	}
 
@@ -65,4 +75,6 @@ public class Square {
 	public int getPosition() {
 		return position;
 	}
+	
+	
 }
