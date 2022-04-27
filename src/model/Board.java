@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 public class Board {
 
+	private final int RICK_INDEX = 0;
+	private final int MORTY_INDEX = 1;
+	
 	private int rows;
 	private int columns;
 	private String completeBoard;
@@ -116,30 +119,34 @@ public class Board {
 		movePlayerForward(dice,head);
 	}
 	
-	private void movePlayerForward(int dice, Square current) { //No está funcionando con dos players.
+	private void movePlayerForward(int dice, Square current) {
 		if(dice == 0) {
-			players.get(0).setTurn(false);
-			players.get(1).setTurn(true);
-			return;
-		} else if(current.getPlayer1() == null) {
-			movePlayerForward(dice, current.getNext());
-			return;
-		} else if(current.getPlayer1().isTurn()) {
-			current.getNext().setPlayer1(current.getPlayer1());
-			current.setPlayer1(null);
-			movePlayerForward(--dice, current.getNext());
+			if(players.get(RICK_INDEX).isTurn()) {
+				players.get(RICK_INDEX).setTurn(false);
+				players.get(MORTY_INDEX).setTurn(true);
+			} else {
+				players.get(MORTY_INDEX).setTurn(false);
+				players.get(RICK_INDEX).setTurn(true);
+			}
+			
+			return;			
+		} else if(players.get(RICK_INDEX).isTurn()) {
+			rickSq.getNext().setPlayer1(players.get(RICK_INDEX));
+			
+			rickSq.setPlayer1(null);
+			
+			rickSq = rickSq.getNext();
+			movePlayerForward(--dice, current);
 			return;
 		} else {
-			movePlayerForward(dice, current.getNext());
+			mortySq.getNext().setPlayer1(players.get(MORTY_INDEX));
+			
+			mortySq.setPlayer1(null);
+			
+			mortySq = mortySq.getNext();
+			movePlayerForward(--dice, current);
 			return;
 		}
-		
-		/*current.getNext().setPlayer(current.getPlayer());
-		current.setPlayer("");
-		
-		current.getNext().setPlayer1(current.getPlayer1());
-		current.setPlayer1(null);
-		movePlayerForward(--dice, current.getNext());*/
 	}
 	
 	public void movePlayerBackward(int dice) {
@@ -148,15 +155,32 @@ public class Board {
 	
 	private void movePlayerBackward(int dice, Square current) {
 		if(dice == 0) {
+			if(players.get(RICK_INDEX).isTurn()) {
+				players.get(RICK_INDEX).setTurn(false);
+				players.get(MORTY_INDEX).setTurn(true);
+			} else {
+				players.get(MORTY_INDEX).setTurn(false);
+				players.get(RICK_INDEX).setTurn(true);
+			}
+			
+			return;			
+		} else if(players.get(RICK_INDEX).isTurn()) {
+			rickSq.getPrevious().setPlayer1(players.get(RICK_INDEX));
+			
+			rickSq.setPlayer1(null);
+			
+			rickSq = rickSq.getPrevious();
+			movePlayerBackward(--dice, current);
 			return;
-		} else if(current.getPlayer().isEmpty()) {
-			movePlayerBackward(dice, current.getNext());
+		} else {
+			mortySq.getPrevious().setPlayer1(players.get(MORTY_INDEX));
+			
+			mortySq.setPlayer1(null);
+			
+			mortySq = mortySq.getPrevious();
+			movePlayerBackward(--dice, current);
 			return;
 		}
-		
-		current.getPrevious().setPlayer(current.getPlayer());
-		current.setPlayer("");
-		movePlayerBackward(--dice, current.getPrevious());
 	}
 	
 	public void positionPlayer(String usernameR, String usernameM) {
