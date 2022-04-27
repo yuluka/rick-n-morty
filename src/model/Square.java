@@ -2,22 +2,34 @@ package model;
 
 public class Square {
 	
-	private int number; //Es le número de la casilla.
-	private boolean seed; //Cada casilla tiene un boolean que dice si hay o no una semilla en ella
-	private int portal; //Si hay un portal en la casilla, entonces la variable será distinta de 0.
-	private String player; //La letra representación del jugfador que esté en la casilla.
+	private int position; //Es le número de la casilla.
+	private String player; //La letra representación del jugador que esté en la casilla.
 	
-	private Square next; //Conexión con la casilla siguiente. Si la casilla es la última, 
-	//el next es la primera casilla existente.
-	private Square previous; //Conexión con la casilla anterior. Si la casilla es la 
-	//primera, el previous es la última casilla existente
+	//private int portals;
+	//private boolean seed;
 	
-	public Square(int number) {
-		this.number = number;
+	private Square next;
+	private Square previous;
+	
+	public Square(int position) {
+		this.position = position;
+		player = "";
+	}
+	
+	public void setPlayer(String player) {
+		this.player = player;
+	}
+	
+	public String getPlayer() {
+		return player;
 	}
 	
 	public String squareToString() {
-		return "[ " + number + " ]";
+		if(player.isEmpty()) {
+			return "[ " + position + " ]";
+		} else {
+			return "[ " + player + " ]";
+		}		
 	}
 
 	public Square getNext() {
@@ -48,5 +60,9 @@ public class Square {
 
 	public void setPrevious(Square previous) {
 		this.previous = previous;
+	}
+
+	public int getPosition() {
+		return position;
 	}
 }

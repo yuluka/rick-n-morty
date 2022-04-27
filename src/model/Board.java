@@ -1,28 +1,22 @@
 package model;
 
-import java.util.ArrayList;
-
-public class Board { //Falta crear el board en la estructura enlazada.
+public class Board {
 
 	private int rows;
 	private int columns;
 	private String completeBoard;
 	
-	private ArrayList<Square> squares;
 	private Square head;
-	private Square tail;//Estos dos van a reemplazar el arraylist	
+	private Square tail;
 	
 	public Board(int columns, int rows) {
 		this.rows = rows;
 		this.columns = columns;
 		
-		squares = new ArrayList<Square>();
 		completeBoard = "";
 		
-		//createSquares();
-		//createBoard();
-		createSquaresLinkedList();
-		createBoardLinkedList();
+		createBoard();
+		setPlayer("R");
 	}
 
 	public int getRows() {
@@ -39,70 +33,14 @@ public class Board { //Falta crear el board en la estructura enlazada.
 
 	public void setColumns(int columns) {
 		this.columns = columns;
-	}
-	
-	public ArrayList<Square> getSquares() {
-		return squares;
-	}
-
-	public void setSquares(ArrayList<Square> squares) {
-		this.squares = squares;
-	}
-	
-	public void createSquares() {
-		createSquares(0);
-	}
-	
-	public void createSquares(int i) {
-		if(i == columns*rows) {
-			return;
-		}
-		
-		squares.add(new Square(i+1));
-		createSquares(++i);
-	}
-	
-	public void createBoard() {
-		createBoard(0);
-	}
-	
-	public void createBoard(int i) {
-		if(i >= columns*rows) {
-			return;
-		}
-		
-		if(i %columns == 0 && i != 0) {
-			int j = i;
-			i += columns;
-			completeBoard += "\n";
-			inverseWay(i, j);
-			completeBoard += "\n";
-		}
-		
-		if(i >= columns*rows) {
-			return;
-		}
-		
-		completeBoard += squares.get(i).squareToString() + "	";
-		createBoard(++i);
-	}
-	
-	public void inverseWay(int i, int j) {
-		if(i == j) {
-			return;
-		} 
-		
-		completeBoard += squares.get(i-1).squareToString() + "	";
-		inverseWay(--i, j);
-	}
-	
+	}	
 	
 	//THINGS WITH LINKED LISTS
-	public void createSquaresLinkedList() {
-		createSquaresLinkedList(new Square(1), 0);
+	public void createBoard() {
+		createBoard(new Square(1), 0);
 	}
 	
-	public void createSquaresLinkedList(Square newSquare, int i) {
+	private void createBoard(Square newSquare, int i) {
 		if(i == columns*rows) {
 			return;
 		}
@@ -123,24 +61,26 @@ public class Board { //Falta crear el board en la estructura enlazada.
 		}
 		
 		++i;		
-		createSquaresLinkedList(new Square(i+1), i);
+		createBoard(new Square(i+1), i);
 	}
 	
-	public void createBoardLinkedList() {
-		createBoardLinkedList(0, head);
+	public void createBoardStr() { //trigger
+		completeBoard = "";
+		createBoardStr(0, head);
 	}
 	
-	public void createBoardLinkedList(int i, Square current) {
+	private void createBoardStr(int i, Square current) {
 		if(i >= columns*rows) {
 			return;
 		}
 		
 		if(i %columns == 0 && i != 0) {
-			int j = i;
 			i += columns;
 			completeBoard += "\n";
+			
 			current = current.getXNext(columns-1);
-			inverseWayLinkedList(i, j, current);
+			inverseWayBoardStr(0, current);
+			
 			completeBoard += "\n";
 		}
 		
@@ -149,19 +89,58 @@ public class Board { //Falta crear el board en la estructura enlazada.
 		}
 		
 		completeBoard += current.squareToString() + "	";
-		createBoardLinkedList(++i, current.getNext());
+		createBoardStr(++i, current.getNext());
 	}
 	
-	public void inverseWayLinkedList(int i, int j, Square current) {
-		if(i == j) {
+	private void inverseWayBoardStr(int i, Square current) {
+		if(i == columns) {
 			return;
 		}
 		
 		completeBoard += current.getPrevious().squareToString() + "	";
-		inverseWayLinkedList(--i, j, current.getPrevious());
+		inverseWayBoardStr(++i, current.getPrevious());
 	}
 	
 	public String getBoard() {
+		createBoardStr();
 		return completeBoard;
+	}
+	
+	public void movePlayerForward(int dice) {
+		movePlayerForward(dice,head);
+	}
+	
+	private void movePlayerForward(int dice, Square current) {
+		if(dice == 0) {
+			return;
+		} else if(current.getPlayer().isEmpty()) {
+			movePlayerForward(dice, current.getNext());
+			return;
+		}
+		
+		current.getNext().setPlayer(current.getPlayer());
+		current.setPlayer("");
+		movePlayerForward(--dice, current.getNext());
+	}
+	
+	public void movePlayerBackward(int dice) {
+		movePlayerBackward(dice,head);
+	}
+	
+	private void movePlayerBackward(int dice, Square current) {
+		if(dice == 0) {
+			return;
+		} else if(current.getPlayer().isEmpty()) {
+			movePlayerBackward(dice, current.getNext());
+			return;
+		}
+		
+		current.getPrevious().setPlayer(current.getPlayer());
+		current.setPlayer("");
+		movePlayerBackward(--dice, current.getPrevious());
+	}
+	
+	public void setPlayer(String player) {
+		head.setPlayer(player);
 	}
 }
