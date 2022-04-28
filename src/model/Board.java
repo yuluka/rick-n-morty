@@ -44,6 +44,19 @@ public class Board {
 		this.columns = columns;
 	}	
 	
+	public Square getRickSq() {
+		return rickSq;
+	}
+
+	public Square getMortySq() {
+		return mortySq;
+	}
+	
+	public String getBoard() {
+		createBoardStr();
+		return completeBoard;
+	}
+	
 	//THINGS WITH LINKED LISTS
 	public void createBoard() {
 		createBoard(new Square(1), 0);
@@ -109,17 +122,18 @@ public class Board {
 		completeBoard += current.getPrevious().squareToString() + "	";
 		inverseWayBoardStr(++i, current.getPrevious());
 	}
-	
-	public String getBoard() {
-		createBoardStr();
-		return completeBoard;
+
+	//PLAYERS MOVEMENT
+	public int launchDice() {
+		int dice = (int) (Math.random()*6+1);
+		
+		return dice;
 	}
+	
+	//Si un jugador cae encima del otro, el otro es movido a una posición random en el tablero.
+	//Falta prever un caso en el que un jugador pasa encima del otro, porque se borra uno de ellos cuando eso sucede
 	
 	public void movePlayerForward(int dice) {
-		movePlayerForward(dice,head);
-	}
-	
-	private void movePlayerForward(int dice, Square current) {
 		if(dice == 0) {
 			if(players.get(RICK_INDEX).isTurn()) {
 				players.get(RICK_INDEX).setTurn(false);
@@ -131,29 +145,39 @@ public class Board {
 			
 			return;			
 		} else if(players.get(RICK_INDEX).isTurn()) {
-			rickSq.getNext().setPlayer1(players.get(RICK_INDEX));
+			if(rickSq.getPosition() + dice == mortySq.getPosition()) {
+				mortySq.setPlayer(null);
+				
+				mortySq = randomSquare();
+				mortySq.setPlayer(players.get(MORTY_INDEX));
+			}
 			
-			rickSq.setPlayer1(null);
+			rickSq.getNext().setPlayer(players.get(RICK_INDEX));
+			
+			rickSq.setPlayer(null);
 			
 			rickSq = rickSq.getNext();
-			movePlayerForward(--dice, current);
+			movePlayerForward(--dice);
 			return;
 		} else {
-			mortySq.getNext().setPlayer1(players.get(MORTY_INDEX));
+			if(mortySq.getPosition() + dice == rickSq.getPosition()) {
+				rickSq.setPlayer(null);
+				
+				rickSq = randomSquare();
+				rickSq.setPlayer(players.get(RICK_INDEX));
+			}
 			
-			mortySq.setPlayer1(null);
+			mortySq.getNext().setPlayer(players.get(MORTY_INDEX));
+			
+			mortySq.setPlayer(null);
 			
 			mortySq = mortySq.getNext();
-			movePlayerForward(--dice, current);
+			movePlayerForward(--dice);
 			return;
 		}
 	}
 	
 	public void movePlayerBackward(int dice) {
-		movePlayerBackward(dice,head);
-	}
-	
-	private void movePlayerBackward(int dice, Square current) {
 		if(dice == 0) {
 			if(players.get(RICK_INDEX).isTurn()) {
 				players.get(RICK_INDEX).setTurn(false);
@@ -164,21 +188,35 @@ public class Board {
 			}
 			
 			return;			
-		} else if(players.get(RICK_INDEX).isTurn()) {
-			rickSq.getPrevious().setPlayer1(players.get(RICK_INDEX));
+		} else if(players.get(RICK_INDEX).isTurn()) {			
+			if(rickSq.getPosition() - dice == mortySq.getPosition()) {
+				mortySq.setPlayer(null);
+				
+				mortySq = randomSquare();
+				mortySq.setPlayer(players.get(MORTY_INDEX));
+			}
 			
-			rickSq.setPlayer1(null);
+			rickSq.getPrevious().setPlayer(players.get(RICK_INDEX));
+			
+			rickSq.setPlayer(null);
 			
 			rickSq = rickSq.getPrevious();
-			movePlayerBackward(--dice, current);
+			movePlayerBackward(--dice);
 			return;
 		} else {
-			mortySq.getPrevious().setPlayer1(players.get(MORTY_INDEX));
+			if(mortySq.getPosition() - dice == rickSq.getPosition()) {
+				rickSq.setPlayer(null);
+				
+				rickSq = randomSquare();
+				rickSq.setPlayer(players.get(RICK_INDEX));
+			}
 			
-			mortySq.setPlayer1(null);
+			mortySq.getPrevious().setPlayer(players.get(MORTY_INDEX));
+			
+			mortySq.setPlayer(null);
 			
 			mortySq = mortySq.getPrevious();
-			movePlayerBackward(--dice, current);
+			movePlayerBackward(--dice);
 			return;
 		}
 	}
@@ -195,8 +233,8 @@ public class Board {
 		
 		rickSq = randomSquare();
 		mortySq = randomSquare();
-		rickSq.setPlayer1(rick);
-		mortySq.setPlayer1(morty);
+		rickSq.setPlayer(rick);
+		mortySq.setPlayer(morty);
 	}
 	
 	public Square randomSquare() {

@@ -20,17 +20,19 @@ public class GameData {
 	}
 	
 	public static int launchDice() {
-		int dice = (int) (Math.random()*6+1);
+		int dice = board.launchDice();
 		
 		return dice;
 	}
 	
-	public static void movePlayer(int wayToMove, int dice) {
-		if(wayToMove == 1) {
+	public static int movePlayer(int wayToMove, int dice) {
+		if(wayToMove == 1) {			
 			board.movePlayerForward(dice);
 		} else {
 			board.movePlayerBackward(dice);
 		}
+		
+		return 0;
 	}
 	
 	public static void createPlayers(String usernameR, String usernameM) {
