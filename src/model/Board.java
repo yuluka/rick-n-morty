@@ -133,7 +133,7 @@ public class Board {
 	//Si un jugador cae encima del otro, el otro es movido a una posición random en el tablero.
 	//Falta prever un caso en el que un jugador pasa encima del otro, porque se borra uno de ellos cuando eso sucede
 	
-	public void movePlayerForward(int dice) {
+	public void movePlayerForward(int dice) {	
 		if(dice == 0) {
 			if(players.get(RICK_INDEX).isTurn()) {
 				players.get(RICK_INDEX).setTurn(false);
@@ -150,6 +150,14 @@ public class Board {
 				
 				mortySq = randomSquare();
 				mortySq.setPlayer(players.get(MORTY_INDEX));
+			} else if(rickSq.getNext().getPosition() == mortySq.getPosition()) {
+				rickSq.getNext().getNext().setPlayer(players.get(RICK_INDEX));
+				
+				rickSq.setPlayer(null);
+				
+				rickSq = rickSq.getNext().getNext();
+				movePlayerForward(dice-2);
+				return;
 			}
 			
 			rickSq.getNext().setPlayer(players.get(RICK_INDEX));
@@ -165,6 +173,14 @@ public class Board {
 				
 				rickSq = randomSquare();
 				rickSq.setPlayer(players.get(RICK_INDEX));
+			} else if(mortySq.getNext().getPosition() == rickSq.getPosition()) {
+				mortySq.getNext().getNext().setPlayer(players.get(MORTY_INDEX));
+				
+				mortySq.setPlayer(null);
+				
+				mortySq = mortySq.getNext().getNext();
+				movePlayerForward(dice-2);
+				return;
 			}
 			
 			mortySq.getNext().setPlayer(players.get(MORTY_INDEX));
@@ -194,6 +210,14 @@ public class Board {
 				
 				mortySq = randomSquare();
 				mortySq.setPlayer(players.get(MORTY_INDEX));
+			} else if(rickSq.getPrevious().getPosition() == mortySq.getPosition()) {
+				rickSq.getPrevious().getPrevious().setPlayer(players.get(RICK_INDEX));
+				
+				rickSq.setPlayer(null);
+				
+				rickSq = rickSq.getPrevious().getPrevious();
+				movePlayerBackward(dice-2);
+				return;
 			}
 			
 			rickSq.getPrevious().setPlayer(players.get(RICK_INDEX));
@@ -209,6 +233,14 @@ public class Board {
 				
 				rickSq = randomSquare();
 				rickSq.setPlayer(players.get(RICK_INDEX));
+			} else if(mortySq.getPrevious().getPosition() == rickSq.getPosition()) {
+				mortySq.getPrevious().getPrevious().setPlayer(players.get(MORTY_INDEX));
+				
+				mortySq.setPlayer(null);
+				
+				mortySq = mortySq.getPrevious().getPrevious();
+				movePlayerBackward(dice-2);
+				return;
 			}
 			
 			mortySq.getPrevious().setPlayer(players.get(MORTY_INDEX));
