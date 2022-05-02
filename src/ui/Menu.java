@@ -45,6 +45,18 @@ public class Menu {
 		
 		GameData.createBoard(columns, rows);
 		
+		createPortals();
+	}
+	
+	public static void createPortals() {
+		System.out.println("\nDigita el número de enlaces de portales (deben ser menos de la mitad de las casillas digitadas):");
+		int portals = in.nextInt();
+		
+		if(!GameData.createPortals(portals)) {
+			System.out.println("\nNo es posible crear tantos enlaces. Intenta Nuevamente.");
+			createPortals();
+		}
+		
 		createPlayers();
 	}
 	
@@ -63,9 +75,12 @@ public class Menu {
 	
 	public static void playing() {
 		System.out.println("\n----- Opciones de jugador -----"
+				+ "\n¡Es el turno de " + GameData.getTurn() + "! ¿Qué deseas hacer?"
 				+ "\n1) Tirar dado."
 				+ "\n2) Ver tablero."
-				+ "\n3) Salir.");
+				+ "\n3) Ver enlaces."
+				+ "\n4) Ver marcador."
+				+ "\n0) Salir.");
 		
 		int selection = in.nextInt();
 		
@@ -78,7 +93,7 @@ public class Menu {
 			seeBoard();
 			break;
 			
-		case 3:
+		case 0:
 			exit();
 			break;
 			

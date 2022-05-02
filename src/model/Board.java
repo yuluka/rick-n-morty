@@ -1,11 +1,14 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Board {
 
 	private final int RICK_INDEX = 0;
 	private final int MORTY_INDEX = 1;
+	
+	private ArrayList<Character> alphabet;
 	
 	private int rows;
 	private int columns;
@@ -24,6 +27,8 @@ public class Board {
 		
 		completeBoard = "";
 		players = new ArrayList<Player>();
+		alphabet = new ArrayList<Character>();
+		generateAlphabet();
 		
 		createBoard();
 	}
@@ -129,9 +134,6 @@ public class Board {
 		
 		return dice;
 	}
-	
-	//Si un jugador cae encima del otro, el otro es movido a una posición random en el tablero.
-	//Falta prever un caso en el que un jugador pasa encima del otro, porque se borra uno de ellos cuando eso sucede
 	
 	public void movePlayerForward(int dice) {	
 		if(dice == 0) {
@@ -285,5 +287,69 @@ public class Board {
 		}
 		
 		return searchSquare(current.getNext(), pos);
+	}
+	
+	
+	//Turns
+	public boolean getTurn() {
+		if(players.get(RICK_INDEX).isTurn()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	//Portals
+	public void generatePortals(int portals) {
+		if(portals == 0) {
+			return;
+		}
+		
+		Square portal1 = generateRandomSquare();
+		portal1.setPortalLetter(generateRandomChar()+"");
+		
+		Square portal2 = generateRandomSquare();
+		portal2.setPortalLetter(portal1.getPortalLetter());
+		
+		portal1.setPortalPair(portal2);
+		portal2.setPortalPair(portal1);
+		
+		generatePortals(--portals);
+	}
+	
+	public Square generateRandomSquare() {
+		int random = (int) (Math.random()*(columns*rows)+1);
+		
+		Square randomSq = searchSquare(head, random);
+		
+		while(randomSq.getPortalLetter() != null) {
+			randomSq = generateRandomSquare();
+		}
+		
+		return randomSq;
+	}
+	
+	public char generateRandomChar() {
+		Random random = new Random();
+		
+		int index = random.nextInt(alphabet.size());
+		char portal = alphabet.get(index);
+		alphabet.remove(index);
+		
+		return portal;
+	}
+	
+	public void generateAlphabet() {
+		for (int i = 0; i < 26; i++) {
+			if(i+65 != 'R' && i+65 != 'M') {
+				alphabet.add((char) (i+65));
+			}
+		}
+		
+		for (int i = 0; i < 26; i++) {
+			if(i+97 != 'r' && i+97 != 'm') {
+				alphabet.add((char) (i+97));
+			}
+		}
 	}
 }

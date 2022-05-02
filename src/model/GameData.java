@@ -15,6 +15,16 @@ public class GameData {
 		board = new Board(col, rows);
 	}
 	
+	public static boolean createPortals(int portals) {
+		if(portals >= (board.getColumns()*board.getRows())/2) {
+			return false;
+		} else {
+			board.generatePortals(portals);
+			
+			return true;
+		}
+	}
+	
 	public static String printBoard() {
 		return board.getBoard();
 	}
@@ -37,5 +47,13 @@ public class GameData {
 	
 	public static void createPlayers(String usernameR, String usernameM) {
 		board.positionPlayer(usernameR, usernameM);
+	}
+	
+	public static String getTurn() {
+		if(board.getTurn()) {
+			return "Rick";
+		} else {
+			return "Morty";
+		}
 	}
 }

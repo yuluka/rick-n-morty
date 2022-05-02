@@ -5,8 +5,10 @@ public class Square {
 	private int position; //Es le número de la casilla.
 	private Player player;
 	
-	//private int portals;
-	//private boolean seed;
+	private String portalLetter;
+	private Square portalPair;
+	
+	private boolean seed;
 	
 	private Square next;
 	private Square previous;
@@ -14,6 +16,7 @@ public class Square {
 	public Square(int position) {
 		this.position = position;
 		player = null;
+		seed = false;
 	}
 	
 	public Player getPlayer() {
@@ -25,10 +28,14 @@ public class Square {
 	}
 
 	public String squareToString() {
-		if(player == null) {
+		if(portalPair == null && !seed && player == null) {
 			return "[ " + position + " ]";
-		} else {
+		} else if(player != null) {
 			return "[ " + player.getName() + " ]";
+		} else if(portalPair != null) {
+			return "[ " + portalLetter + " ]";
+		} else {
+			return "[ * ]";
 		}		
 	}
 
@@ -65,6 +72,24 @@ public class Square {
 	public int getPosition() {
 		return position;
 	}
-	
-	
+
+	public String getPortalLetter() {
+		return portalLetter;
+	}
+
+	public void setPortalLetter(String portalLetter) {
+		this.portalLetter = portalLetter;
+	}
+
+	public Square getPortalPair() {
+		return portalPair;
+	}
+
+	public void setPortalPair(Square portalPair) {
+		if(portalLetter.isEmpty()) {
+			portalPair = null;
+		}
+		
+		this.portalPair = portalPair;
+	}	
 }
