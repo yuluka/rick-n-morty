@@ -25,6 +25,16 @@ public class GameData {
 		}
 	}
 	
+	public static boolean createSeeds(int seeds) {
+		if(seeds> (board.getColumns()*board.getRows())) {
+			return false;
+		}else {
+			board.generateSeeds(seeds);
+			
+			return true;
+		}
+	}
+	
 	public static String printBoard() {
 		return board.getBoard();
 	}

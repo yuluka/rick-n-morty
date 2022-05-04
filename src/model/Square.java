@@ -91,5 +91,15 @@ public class Square {
 		}
 		
 		this.portalPair = portalPair;
+	}
+
+	public boolean isSeed() {
+		return seed;
+	}
+
+	public void setSeed(boolean seed) {
+		this.seed = seed;
 	}	
+	
+	
 }
