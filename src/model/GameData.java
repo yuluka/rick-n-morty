@@ -25,15 +25,15 @@ public class GameData {
 		}
 	}
 	
-	public static boolean createSeeds(int seeds) {
-		if(seeds> (board.getColumns()*board.getRows())) {
-			return false;
-		}else {
-			board.generateSeeds(seeds);
-			
-			return true;
-		}
-	}
+	public static boolean createSeeds(int seeds) { 
+		if(seeds> (board.getColumns()*board.getRows())) { 
+			return false; 
+		}else { 
+			board.generateSeeds(seeds); 
+			 
+			return true; 
+		} 
+	} 
 	
 	public static String printBoard() {
 		return board.getBoard();
@@ -53,6 +53,14 @@ public class GameData {
 		}
 		
 		return 0;
+	}
+	
+	public static int getPlayerSeeds(String player) {
+		if(player == "R") {
+			return board.getRick().getSeeds();
+		} else {
+			return board.getMorty().getSeeds();
+		}
 	}
 	
 	public static void createPlayers(String usernameR, String usernameM) {

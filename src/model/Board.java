@@ -62,6 +62,14 @@ public class Board {
 		return completeBoard;
 	}
 	
+	public Player getRick() {
+		return players.get(RICK_INDEX);
+	}
+	
+	public Player getMorty() {
+		return players.get(MORTY_INDEX);
+	}
+
 	//THINGS WITH LINKED LISTS
 	public void createBoard() {
 		createBoard(new Square(1), 0);
@@ -145,6 +153,8 @@ public class Board {
 				players.get(RICK_INDEX).setTurn(true);
 			}
 			
+			collectSeed();
+			
 			return;			
 		} else if(players.get(RICK_INDEX).isTurn()) {
 			if(rickSq.getPosition() + dice == mortySq.getPosition()) {
@@ -152,6 +162,8 @@ public class Board {
 				
 				mortySq = randomSquare();
 				mortySq.setPlayer(players.get(MORTY_INDEX));
+				
+				collectSeed();
 			} else if(rickSq.getNext().getPosition() == mortySq.getPosition()) {
 				rickSq.getNext().getNext().setPlayer(players.get(RICK_INDEX));
 				
@@ -175,6 +187,8 @@ public class Board {
 				
 				rickSq = randomSquare();
 				rickSq.setPlayer(players.get(RICK_INDEX));
+				
+				collectSeed();
 			} else if(mortySq.getNext().getPosition() == rickSq.getPosition()) {
 				mortySq.getNext().getNext().setPlayer(players.get(MORTY_INDEX));
 				
@@ -205,6 +219,8 @@ public class Board {
 				players.get(RICK_INDEX).setTurn(true);
 			}
 			
+			collectSeed();
+			
 			return;			
 		} else if(players.get(RICK_INDEX).isTurn()) {			
 			if(rickSq.getPosition() - dice == mortySq.getPosition()) {
@@ -212,6 +228,8 @@ public class Board {
 				
 				mortySq = randomSquare();
 				mortySq.setPlayer(players.get(MORTY_INDEX));
+				
+				collectSeed();
 			} else if(rickSq.getPrevious().getPosition() == mortySq.getPosition()) {
 				rickSq.getPrevious().getPrevious().setPlayer(players.get(RICK_INDEX));
 				
@@ -235,6 +253,8 @@ public class Board {
 				
 				rickSq = randomSquare();
 				rickSq.setPlayer(players.get(RICK_INDEX));
+				
+				collectSeed();
 			} else if(mortySq.getPrevious().getPosition() == rickSq.getPosition()) {
 				mortySq.getPrevious().getPrevious().setPlayer(players.get(MORTY_INDEX));
 				
@@ -269,6 +289,8 @@ public class Board {
 		mortySq = randomSquare();
 		rickSq.setPlayer(rick);
 		mortySq.setPlayer(morty);
+		
+		collectSeed();
 	}
 	
 	public Square randomSquare() {
@@ -307,17 +329,17 @@ public class Board {
 		
 		Square portal1 = generateRandomSquare();
 		
-		while(portal1.getPortalLetter() != null) {
-			portal1 = generateRandomSquare();
+		while(portal1.getPortalLetter() != null) { 
+			portal1 = generateRandomSquare(); 
 		}
 		
 		portal1.setPortalLetter(generateRandomChar()+"");
 		
 		Square portal2 = generateRandomSquare();
 		
-		while(portal2.getPortalLetter() != null) {
-			portal2 = generateRandomSquare();
-		}
+		while(portal2.getPortalLetter() != null) { 
+			portal2 = generateRandomSquare(); 
+		} 
 		
 		portal2.setPortalLetter(portal1.getPortalLetter());
 		
@@ -331,10 +353,6 @@ public class Board {
 		int random = (int) (Math.random()*(columns*rows)+1);
 		
 		Square randomSq = searchSquare(head, random);
-		
-		//while(randomSq.getPortalLetter() != null) {
-			//randomSq = generateRandomSquare();
-		//}
 		
 		return randomSq;
 	}
@@ -363,21 +381,31 @@ public class Board {
 		}
 	}
 	
-	//GENERATION ON SEEDS
+	//SEEDS 
+	public void generateSeeds(int seeds) { 
+		if(seeds==0) { 
+			return; 
+		} 
+		 
+		Square aux = generateRandomSquare(); 
+		 
+		while(aux.isSeed()) { 
+			aux=generateRandomSquare(); 
+		} 
+		 
+		aux.setSeed(true); 
+		generateSeeds(--seeds); 
+		 
+	}
 	
-	public void generateSeeds(int seeds) {
-		if(seeds==0) {
-			return;
+	public void collectSeed() {
+		if(rickSq.isSeed()) {
+			players.get(RICK_INDEX).addSeeds();
+			rickSq.setSeed(false);
+		} 
+		if(mortySq.isSeed()) {
+			players.get(MORTY_INDEX).addSeeds();
+			mortySq.setSeed(false);
 		}
-		
-		Square aux = generateRandomSquare();
-		
-		while(aux.isSeed()) {
-			aux=generateRandomSquare();
-		}
-		
-		aux.setSeed(true);
-		generateSeeds(--seeds);
-		
 	}
 }

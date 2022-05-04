@@ -99,7 +99,5 @@ public class Square {
 
 	public void setSeed(boolean seed) {
 		this.seed = seed;
-	}	
-	
-	
+	}
 }
