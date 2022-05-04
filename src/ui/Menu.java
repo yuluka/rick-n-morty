@@ -53,7 +53,7 @@ public class Menu {
 		int seeds = in.nextInt();
 		
 		if(!GameData.createSeeds(seeds)) {
-			System.out.println("\nNo es posible crear tantos enlaces. Intenta Nuevamente.");
+			System.out.println("\nNo es posible crear tantas semillas. Intenta Nuevamente.");
 			createSeeds();
 		}
 		
@@ -105,6 +105,10 @@ public class Menu {
 			seeBoard();
 			break;
 			
+		case 4:
+			showMarker();
+			break;
+			
 		case 0:
 			exit();
 			break;
@@ -152,6 +156,13 @@ public class Menu {
 		System.out.println("\n" + GameData.printBoard());
 		playing();
 	} 
+	
+	public static void showMarker() {
+		System.out.println("\nRick: " + GameData.getPlayerSeeds("R") + " semillas." +
+				"\nMorty: " + GameData.getPlayerSeeds("M") + " semillas.");
+		
+		playing();
+	}
 	
 	public static void seeScores() {
 		

@@ -20,8 +20,8 @@ public class Player {
 		return seeds;
 	}
 
-	public void setSeeds(int seeds) {
-		this.seeds = seeds;
+	public void addSeeds() {
+		++seeds;
 	}
 
 	public String getName() {
