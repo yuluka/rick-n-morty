@@ -306,9 +306,19 @@ public class Board {
 		}
 		
 		Square portal1 = generateRandomSquare();
+		
+		while(portal1.getPortalLetter() != null) { 
+			portal1 = generateRandomSquare(); 
+		}
+		
 		portal1.setPortalLetter(generateRandomChar()+"");
 		
 		Square portal2 = generateRandomSquare();
+		
+		while(portal2.getPortalLetter() != null) { 
+			portal2 = generateRandomSquare(); 
+		} 
+		
 		portal2.setPortalLetter(portal1.getPortalLetter());
 		
 		portal1.setPortalPair(portal2);
@@ -322,9 +332,9 @@ public class Board {
 		
 		Square randomSq = searchSquare(head, random);
 		
-		while(randomSq.getPortalLetter() != null) {
+		/*while(randomSq.getPortalLetter() != null) {
 			randomSq = generateRandomSquare();
-		}
+		}*/
 		
 		return randomSq;
 	}
@@ -352,4 +362,22 @@ public class Board {
 			}
 		}
 	}
+	
+	//GENERATION ON SEEDS 
+	 
+	public void generateSeeds(int seeds) { 
+		if(seeds==0) { 
+			return; 
+		} 
+		 
+		Square aux = generateRandomSquare(); 
+		 
+		while(aux.isSeed()) { 
+			aux=generateRandomSquare(); 
+		} 
+		 
+		aux.setSeed(true); 
+		generateSeeds(--seeds); 
+		 
+	} 
 }

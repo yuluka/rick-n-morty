@@ -45,6 +45,18 @@ public class Menu {
 		
 		GameData.createBoard(columns, rows);
 		
+		createSeeds();
+	}
+	
+	public static void createSeeds() {
+		System.out.println("\nDigita el número de semillas (no deben ser más de las casillas totales):");
+		int seeds = in.nextInt();
+		
+		if(!GameData.createSeeds(seeds)) {
+			System.out.println("\nNo es posible crear tantos enlaces. Intenta Nuevamente.");
+			createSeeds();
+		}
+		
 		createPortals();
 	}
 	
@@ -139,7 +151,7 @@ public class Menu {
 	public static void seeBoard() {
 		System.out.println("\n" + GameData.printBoard());
 		playing();
-	}
+	} 
 	
 	public static void seeScores() {
 		
