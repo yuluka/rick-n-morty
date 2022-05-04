@@ -14,6 +14,8 @@ public class Board {
 	private int columns;
 	private String completeBoard;
 	
+	private int totalSeeds;
+	
 	private Square head;
 	private Square tail;
 	private Square rickSq;
@@ -57,8 +59,8 @@ public class Board {
 		return mortySq;
 	}
 	
-	public String getBoard() {
-		createBoardStr();
+	public String getBoard(int boardVersion) {
+		createBoardStr(boardVersion);
 		return completeBoard;
 	}
 	
@@ -99,12 +101,12 @@ public class Board {
 		createBoard(new Square(i+1), i);
 	}
 	
-	public void createBoardStr() { //trigger
+	public void createBoardStr(int boardVersion) { //trigger
 		completeBoard = "";
-		createBoardStr(0, head);
+		createBoardStr(0, head, boardVersion);
 	}
 	
-	private void createBoardStr(int i, Square current) {
+	private void createBoardStr(int i, Square current, int boardVersion) {
 		if(i >= columns*rows) {
 			return;
 		}
@@ -114,7 +116,7 @@ public class Board {
 			completeBoard += "\n";
 			
 			current = current.getXNext(columns-1);
-			inverseWayBoardStr(0, current);
+			inverseWayBoardStr(0, current, boardVersion);
 			
 			completeBoard += "\n";
 		}
@@ -123,17 +125,17 @@ public class Board {
 			return;
 		}
 		
-		completeBoard += current.squareToString() + "	";
-		createBoardStr(++i, current.getNext());
+		completeBoard += current.squareToString(boardVersion) + "	";
+		createBoardStr(++i, current.getNext(), boardVersion);
 	}
 	
-	private void inverseWayBoardStr(int i, Square current) {
+	private void inverseWayBoardStr(int i, Square current, int boardVersion) {
 		if(i == columns) {
 			return;
 		}
 		
-		completeBoard += current.getPrevious().squareToString() + "	";
-		inverseWayBoardStr(++i, current.getPrevious());
+		completeBoard += current.getPrevious().squareToString(boardVersion) + "	";
+		inverseWayBoardStr(++i, current.getPrevious(), boardVersion);
 	}
 
 	//PLAYERS MOVEMENT
@@ -145,6 +147,10 @@ public class Board {
 	
 	public void movePlayerForward(int dice) {	
 		if(dice == 0) {
+			collectSeed();
+			teleport();
+			collectSeed();
+			
 			if(players.get(RICK_INDEX).isTurn()) {
 				players.get(RICK_INDEX).setTurn(false);
 				players.get(MORTY_INDEX).setTurn(true);
@@ -152,8 +158,6 @@ public class Board {
 				players.get(MORTY_INDEX).setTurn(false);
 				players.get(RICK_INDEX).setTurn(true);
 			}
-			
-			collectSeed();
 			
 			return;			
 		} else if(players.get(RICK_INDEX).isTurn()) {
@@ -211,6 +215,10 @@ public class Board {
 	
 	public void movePlayerBackward(int dice) {
 		if(dice == 0) {
+			collectSeed();
+			teleport();
+			collectSeed();
+			
 			if(players.get(RICK_INDEX).isTurn()) {
 				players.get(RICK_INDEX).setTurn(false);
 				players.get(MORTY_INDEX).setTurn(true);
@@ -218,8 +226,6 @@ public class Board {
 				players.get(MORTY_INDEX).setTurn(false);
 				players.get(RICK_INDEX).setTurn(true);
 			}
-			
-			collectSeed();
 			
 			return;			
 		} else if(players.get(RICK_INDEX).isTurn()) {			
@@ -381,9 +387,26 @@ public class Board {
 		}
 	}
 	
-	//SEEDS 
-	public void generateSeeds(int seeds) { 
-		if(seeds==0) { 
+	public void teleport() {
+		if(players.get(RICK_INDEX).isTurn() && rickSq.getPortalPair() != null) {
+			rickSq.getPortalPair().setPlayer(players.get(RICK_INDEX));
+			rickSq.setPlayer(null);
+			rickSq = rickSq.getPortalPair();
+		} else if(players.get(MORTY_INDEX).isTurn() && mortySq.getPortalPair() != null) {
+			mortySq.getPortalPair().setPlayer(players.get(MORTY_INDEX));
+			mortySq.setPlayer(null);
+			mortySq = mortySq.getPortalPair();
+		}
+	}
+	
+	//SEEDS 	
+	public void createSeeds(int seeds) {
+		totalSeeds = seeds;
+		generateSeeds(seeds);
+	}
+	
+	private void generateSeeds(int seeds) { 
+		if(seeds == 0) { 
 			return; 
 		} 
 		 
@@ -402,10 +425,35 @@ public class Board {
 		if(rickSq.isSeed()) {
 			players.get(RICK_INDEX).addSeeds();
 			rickSq.setSeed(false);
+			--totalSeeds;
 		} 
 		if(mortySq.isSeed()) {
 			players.get(MORTY_INDEX).addSeeds();
 			mortySq.setSeed(false);
+			--totalSeeds;
 		}
 	}
+	
+	public boolean isEndGame() {
+		if(totalSeeds == 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public Player getWinner() {
+		if(players.get(MORTY_INDEX).getSeeds() > players.get(RICK_INDEX).getSeeds()) {
+			return players.get(MORTY_INDEX);
+		} else {
+			return players.get(RICK_INDEX);
+		}
+	}
+	
+	/*public void calculateScore() {
+		Player winner = getWinner();
+		
+		int score = winner.getSeeds() * 120;
+		winner.setScore(score);
+	}*/
 }

@@ -26,17 +26,19 @@ public class GameData {
 	}
 	
 	public static boolean createSeeds(int seeds) { 
-		if(seeds> (board.getColumns()*board.getRows())) { 
+		if(seeds > (board.getColumns()*board.getRows())) { 
 			return false; 
-		}else { 
-			board.generateSeeds(seeds); 
+		} else if(seeds == 0) {
+			return false;
+		} else { 
+			board.createSeeds(seeds); 
 			 
 			return true; 
 		} 
 	} 
 	
-	public static String printBoard() {
-		return board.getBoard();
+	public static String printBoard(int boardVersion) {
+		return board.getBoard(boardVersion);
 	}
 	
 	public static int launchDice() {
@@ -53,6 +55,14 @@ public class GameData {
 		}
 		
 		return 0;
+	}
+	
+	public static boolean isEndGame() {
+		return board.isEndGame();
+	}
+	
+	public static void calculateScore() {
+		
 	}
 	
 	public static int getPlayerSeeds(String player) {
@@ -72,6 +82,14 @@ public class GameData {
 			return "Rick";
 		} else {
 			return "Morty";
+		}
+	}
+	
+	public static String getWinner() {
+		if(board.getWinner().getName().equals("M")) {
+			return "Morty con " + board.getMorty().getSeeds();
+		} else {
+			return "Rick con " + board.getRick().getSeeds() + " semillas.";
 		}
 	}
 }
