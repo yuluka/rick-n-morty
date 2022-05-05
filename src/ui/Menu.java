@@ -43,7 +43,10 @@ public class Menu {
 		int columns = in.nextInt();
 		int rows = in.nextInt();
 		
-		GameData.createBoard(columns, rows);
+		if(!GameData.createBoard(columns, rows)) {
+			System.out.println("\nNo es posible crear un tablero tan pequeño. Intenta Nuevamente.");
+			startGame();
+		}
 		
 		createSeeds();
 	}
@@ -171,6 +174,9 @@ public class Menu {
 			
 			GameData.registerScore();
 			
+			System.out.println("\n----- Top 5 -----"
+					+ GameData.getTop5());
+			
 			menu();
 		} else {
 			playing();
@@ -213,6 +219,8 @@ public class Menu {
 	}
 	
 	public static void exit() {
+		System.out.println("\n¡Hasta luego!");
+		
 		System.exit(0);
 	}
 }

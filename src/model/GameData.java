@@ -1,10 +1,19 @@
 package model;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class GameData {
+@SuppressWarnings("serial")
+public class GameData implements Serializable{
 
 	private static Board board;
 	private static ArrayList<Player> scores = new ArrayList<Player>();
@@ -13,8 +22,13 @@ public class GameData {
 		
 	}
 	
-	public static void createBoard(int col, int rows) {
-		board = new Board(col, rows);
+	public static boolean createBoard(int col, int rows) {
+		if ((col*rows) <= 1) {
+			return false;
+		} else {
+			board = new Board(col, rows);
+			return true;
+		}
 	}
 	
 	public static boolean createPortals(int portals) {
@@ -94,11 +108,13 @@ public class GameData {
 		} else {
 			scores.get(index).addScore(winner.getScore());
 		}
+		
+		saveScores();
 	}
 	
 	public static int searchPlayer(Player goal) {
 		if(scores.size() > 0) {
-			sortScores();
+			sortScoresByName();
 			return searchPlayer(0, scores.size(), goal);
 		} else {
 			return -1;
@@ -106,7 +122,7 @@ public class GameData {
 	}
 	
 	private static int searchPlayer(int beg, int end, Player goal) {
-		if(end < beg) {
+		if(end <= beg) {
 			return -1;	
 		}
 		
@@ -127,19 +143,43 @@ public class GameData {
 	
 	public static String getWinner() {
 		if(board.getWinner().getName().equals("M")) {
-			return "Morty con " + board.getMorty().getSeeds() + " semillas";
+			return "Morty con " + board.getMorty().getSeeds() + " semillas.";
 		} else {
 			return "Rick con " + board.getRick().getSeeds() + " semillas.";
 		}
 	}
 	
-	private static void sortScores() {
+	private static void sortScoresByName() {
 		Collections.sort(scores, new Comparator<Player>() {
 			@Override
 			public int compare(Player A, Player B) {
 				return A.getUsername().compareTo(B.getUsername());
 			}
 		});
+	}
+	
+	private static void sortScoresByScore() {
+		for (int i = 1; i < scores.size(); i++) {
+			for (int j = 0; j < i; j++) {
+				if(scores.get(i).getScore() > scores.get(j).getScore()) {
+					Player aux = scores.get(i);
+					scores.remove(i);
+					scores.add(j, aux);
+					break;
+				}
+			}
+		}
+	}
+	
+	public static String getTop5() {
+		String top5 = "";
+		sortScoresByScore();
+		
+		for (int i = 0; i < scores.size() && i < 6; i++) {
+			top5 += "\n" + scores.get(i).getUsername() + ": " + scores.get(i).getScore();
+		}
+		
+		return top5;
 	}
 	
 	public static String getScores() {
@@ -150,5 +190,39 @@ public class GameData {
 		}
 		
 		return scoresStr;
+	}
+	
+	public static void saveScores() {
+		try {
+			File file = new File("data/scores.temp");
+			FileOutputStream fos = new FileOutputStream(file);
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(scores);
+			
+			oos.close();			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static void loadScores() {
+		try {
+			File file = new File("data/scores.temp");
+			FileInputStream fis = new FileInputStream(file);
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			Object object = ois.readObject();
+			scores = (ArrayList<Player>) object;
+			
+			ois.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 }
