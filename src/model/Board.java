@@ -8,6 +8,10 @@ public class Board {
 	private final int RICK_INDEX = 0;
 	private final int MORTY_INDEX = 1;
 	
+	private long timeBeg;
+	private long timeEnd;
+	private long totalTime;
+	
 	private ArrayList<Character> alphabet;
 	
 	private int rows;
@@ -217,7 +221,6 @@ public class Board {
 		if(dice == 0) {
 			collectSeed();
 			teleport();
-			collectSeed();
 			
 			if(players.get(RICK_INDEX).isTurn()) {
 				players.get(RICK_INDEX).setTurn(false);
@@ -236,6 +239,7 @@ public class Board {
 				mortySq.setPlayer(players.get(MORTY_INDEX));
 				
 				collectSeed();
+				isEndGame();
 			} else if(rickSq.getPrevious().getPosition() == mortySq.getPosition()) {
 				rickSq.getPrevious().getPrevious().setPlayer(players.get(RICK_INDEX));
 				
@@ -297,6 +301,8 @@ public class Board {
 		mortySq.setPlayer(morty);
 		
 		collectSeed();
+		
+		timeBeg = System.currentTimeMillis();
 	}
 	
 	public Square randomSquare() {
@@ -392,10 +398,16 @@ public class Board {
 			rickSq.getPortalPair().setPlayer(players.get(RICK_INDEX));
 			rickSq.setPlayer(null);
 			rickSq = rickSq.getPortalPair();
+			
+			collectSeed();
+			//isEndGame();
 		} else if(players.get(MORTY_INDEX).isTurn() && mortySq.getPortalPair() != null) {
 			mortySq.getPortalPair().setPlayer(players.get(MORTY_INDEX));
 			mortySq.setPlayer(null);
 			mortySq = mortySq.getPortalPair();
+			
+			collectSeed();
+			//isEndGame();
 		}
 	}
 	
@@ -436,6 +448,9 @@ public class Board {
 	
 	public boolean isEndGame() {
 		if(totalSeeds == 0) {
+			timeEnd = System.currentTimeMillis();
+			totalTime = timeEnd-timeBeg;
+			
 			return true;
 		} else {
 			return false;
@@ -450,10 +465,10 @@ public class Board {
 		}
 	}
 	
-	/*public void calculateScore() {
+	public void calculateScore() {
 		Player winner = getWinner();
 		
-		int score = winner.getSeeds() * 120;
+		int score = (winner.getSeeds() * 120) - (int) (totalTime/1000);
 		winner.setScore(score);
-	}*/
+	}
 }

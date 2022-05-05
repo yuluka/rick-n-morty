@@ -82,6 +82,8 @@ public class Menu {
 		
 		GameData.createPlayers(rick, morty);
 		
+		isEndGame();
+		
 		playing();
 	}
 	
@@ -119,7 +121,7 @@ public class Menu {
 			break;
 			
 		case 0:
-			exit();
+			menu();
 			break;
 			
 		default:
@@ -158,7 +160,6 @@ public class Menu {
 		}
 		
 		GameData.movePlayer(selection, diceResult);
-		//playing();
 		
 		isEndGame();
 	}
@@ -167,6 +168,8 @@ public class Menu {
 		if(GameData.isEndGame()) {
 			System.out.println("\n¡Ya se han recolectado todas las semillas! El juego ha acabado."
 					+ "\nEl ganador es: " + GameData.getWinner());
+			
+			GameData.registerScore();
 			
 			menu();
 		} else {
@@ -203,7 +206,10 @@ public class Menu {
 	}
 	
 	public static void seeScores() {
+		System.out.println("\n----- Puntajes globales -----"
+				+ GameData.getScores());
 		
+		menu();
 	}
 	
 	public static void exit() {
