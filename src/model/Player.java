@@ -1,6 +1,9 @@
 package model;
 
-public class Player {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Player implements Serializable{
 	
 	private int seeds; //The seeds the player has recolected.
 	private String name; //Letter R or M
@@ -46,6 +49,10 @@ public class Player {
 
 	public void setScore(int score) {
 		this.score = score;
+	}
+	
+	public void addScore(int addScore) {
+		score += addScore;
 	}
 
 	public boolean isTurn() {

@@ -43,7 +43,10 @@ public class Menu {
 		int columns = in.nextInt();
 		int rows = in.nextInt();
 		
-		GameData.createBoard(columns, rows);
+		if(!GameData.createBoard(columns, rows)) {
+			System.out.println("\nNo es posible crear un tablero tan pequeño. Intenta Nuevamente.");
+			startGame();
+		}
 		
 		createSeeds();
 	}
@@ -53,7 +56,7 @@ public class Menu {
 		int seeds = in.nextInt();
 		
 		if(!GameData.createSeeds(seeds)) {
-			System.out.println("\nNo es posible crear tantas semillas. Intenta Nuevamente.");
+			System.out.println("\nNo es posible crear tantas semillas o crear un juego sin semillas. Intenta Nuevamente.");
 			createSeeds();
 		}
 		
@@ -82,6 +85,8 @@ public class Menu {
 		
 		GameData.createPlayers(rick, morty);
 		
+		isEndGame();
+		
 		playing();
 	}
 	
@@ -91,7 +96,8 @@ public class Menu {
 				+ "\n1) Tirar dado."
 				+ "\n2) Ver tablero."
 				+ "\n3) Ver enlaces."
-				+ "\n4) Ver marcador."
+				+ "\n4) Ver semillas."
+				+ "\n5) Ver marcador."
 				+ "\n0) Salir.");
 		
 		int selection = in.nextInt();
@@ -105,12 +111,20 @@ public class Menu {
 			seeBoard();
 			break;
 			
+		case 3:
+			seePortals();
+			break;
+		
 		case 4:
+			seeBoardSeeds();
+			break;
+			
+		case 5:
 			showMarker();
 			break;
 			
 		case 0:
-			exit();
+			menu();
 			break;
 			
 		default:
@@ -149,13 +163,46 @@ public class Menu {
 		}
 		
 		GameData.movePlayer(selection, diceResult);
-		playing();
+		
+		isEndGame();
+	}
+	
+	public static void isEndGame() {
+		if(GameData.isEndGame()) {
+			System.out.println("\n¡Ya se han recolectado todas las semillas! El juego ha acabado."
+					+ "\nEl ganador es: " + GameData.getWinner());
+			
+			GameData.registerScore();
+			
+			System.out.println("\n----- Top 5 -----"
+					+ GameData.getTop5());
+			
+			menu();
+		} else {
+			playing();
+		}
 	}
 	
 	public static void seeBoard() {
-		System.out.println("\n" + GameData.printBoard());
+		int boardVersion = 1; // Normal board
+		
+		System.out.println("\n" + GameData.printBoard(boardVersion));
 		playing();
 	} 
+	
+	public static void seePortals() {
+		int boardVersion = 2; // Board with just portals
+		
+		System.out.println("\n" + GameData.printBoard(boardVersion));
+		playing();
+	}
+	
+	public static void seeBoardSeeds() {
+		int boardVersion = 3; // Board with just seeds
+		
+		System.out.println("\n" + GameData.printBoard(boardVersion));
+		playing();
+	}
 	
 	public static void showMarker() {
 		System.out.println("\nRick: " + GameData.getPlayerSeeds("R") + " semillas." +
@@ -165,10 +212,15 @@ public class Menu {
 	}
 	
 	public static void seeScores() {
+		System.out.println("\n----- Puntajes globales -----"
+				+ GameData.getScores());
 		
+		menu();
 	}
 	
 	public static void exit() {
+		System.out.println("\n¡Hasta luego!");
+		
 		System.exit(0);
 	}
 }

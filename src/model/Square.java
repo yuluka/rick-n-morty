@@ -2,6 +2,9 @@ package model;
 
 public class Square {
 	
+	private final int NORMAL_BOARD = 1;
+	private final int PORTALS_BOARD = 2;
+	
 	private int position; //Es le número de la casilla.
 	private Player player;
 	
@@ -27,16 +30,40 @@ public class Square {
 		this.player = player;
 	}
 
-	public String squareToString() {
-		if(portalPair == null && !seed && player == null) {
+	public String squareToString(int boardVersion) {
+		if(boardVersion == NORMAL_BOARD) {
+			return squareToStringNormal();
+		} else if(boardVersion == PORTALS_BOARD) {
+			return squareToStringPortals();
+		} else {
+			return squareToStringSeeds();
+		}
+	}
+	
+	public String squareToStringNormal() {
+		if(!seed && player == null) {
 			return "[ " + position + " ]";
 		} else if(player != null) {
 			return "[ " + player.getName() + " ]";
-		} else if(portalPair != null) {
-			return "[ " + portalLetter + " ]";
 		} else {
 			return "[ * ]";
 		}		
+	}
+	
+	public String squareToStringPortals() {
+		if(portalPair != null) {
+			return "[ " + portalLetter + " ]";
+		} else {
+			return "[  ]";
+		}		
+	}
+	
+	public String squareToStringSeeds() {
+		if(seed) {
+			return "[ * ]";
+		} else {
+			return "[  ]";
+		}	
 	}
 
 	public Square getNext() {
